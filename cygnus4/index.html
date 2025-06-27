@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YAMAHA 勁戰四代 (2UB) 互動式車殼扣件指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        .tab-active {
+            background-color: #1e3a8a; /* Yamaha Blue */
+            color: #ffffff;
+        }
+        .tab-inactive {
+            background-color: #e5e7eb;
+            color: #374151;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .tab-inactive:hover {
+            background-color: #d1d5db;
+        }
+        .sub-tab-active {
+            background-color: #60a5fa;
+            color: #ffffff;
+            font-weight: 700;
+        }
+        .sub-tab-inactive {
+             background-color: #f3f4f6;
+             color: #4b5563;
+             transition: background-color 0.3s, color 0.3s;
+        }
+        .sub-tab-inactive:hover {
+            background-color: #e5e7eb;
+        }
+        .content-section, .sub-content-section {
+            display: none;
+        }
+        .content-section.active, .sub-content-section.active {
+            display: block;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+<!-- Chosen Palette: Yamaha Blue & Cool Gray -->
+<!-- Application Structure Plan: Replicating the successful task-oriented SPA structure from the T2 guide. Tabs for "總覽", "前段", "中段", "後段", and a searchable "總目錄" provide immediate access to relevant information for a mechanic or DIYer. This structure is superior to the linear report as it anticipates user needs (e.g., "I'm working on the H-shell") and provides a direct path. The core interaction remains the live-searchable master list, which is the most critical tool for finding specific fastener data. -->
+<!-- Visualization & Content Choices: Report Info: Fastener types (自攻螺絲, 螺栓, 螺帽, 鉚釘) -> Goal: Inform on composition -> Viz: Bar Chart (Chart.js) showing counts. Justification: A quick visual overview of hardware. Report Info: Fastener tables per section -> Goal: Organize & Query -> Presentation: Interactive HTML table with a JS-powered live search filter in the "總目錄", and filtered, context-specific tables in the detailed sections. Justification: Core interactive feature for rapid information retrieval. Report Info: "實務拆卸建議" & "技術備註" text -> Goal: Guide & Warn -> Presentation: Styled callout blocks with icons (HTML/CSS). Justification: Elevates critical, actionable advice from the body of the report, preventing user error. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-900">YAMAHA 勁戰四代 (2UB)</h1>
+            <p class="text-xl md:text-2xl text-slate-600 mt-2">互動式車身外殼扣件指南</p>
+        </header>
+
+        <nav id="main-nav" class="flex flex-wrap justify-center gap-2 mb-8">
+            <button data-target="overview" class="nav-tab tab-active px-4 py-2 rounded-lg font-semibold shadow">總覽與提示</button>
+            <button data-target="front" class="nav-tab tab-inactive px-4 py-2 rounded-lg font-semibold shadow">前段車身</button>
+            <button data-target="mid" class="nav-tab tab-inactive px-4 py-2 rounded-lg font-semibold shadow">中段車身</button>
+            <button data-target="rear" class="nav-tab tab-inactive px-4 py-2 rounded-lg font-semibold shadow">後段與引擎周邊</button>
+            <button data-target="master-list" class="nav-tab tab-inactive px-4 py-2 rounded-lg font-semibold shadow">扣件總目錄</button>
+            <button data-target="purchase" class="nav-tab tab-inactive px-4 py-2 rounded-lg font-semibold shadow">採購與組裝</button>
+        </nav>
+
+        <main id="main-content">
+            <section id="content-overview" class="content-section active">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-blue-800 mb-4">指南簡介與關鍵拆裝策略</h2>
+                    <p class="mb-4 text-slate-700">本指南為 YAMAHA 第四代勁戰 (Cygnus-X, 車型代號 2UB) 的車體外殼，提供一份權威且詳盡的扣件指南。所有資訊均基於官方零件型錄，並結合實務經驗分析，旨在為 DIY 愛好者與專業技師提供最精確的數據支援。</p>
+                    
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-800 p-4 rounded-r-lg mb-6">
+                        <h3 class="font-bold">⚠️ 核心拆卸順序警告</h3>
+                        <p class="mt-2">第四代勁戰的車殼設計大量採用隱藏式扣件，拆裝具有嚴格的先後順序。**錯誤的順序將導致卡榫斷裂。**</p>
+                        <ol class="list-decimal list-inside mt-2 space-y-1 font-semibold">
+                            <li>由座墊與置物箱開始。</li>
+                            <li>拆卸龍頭車殼。</li>
+                            <li>鬆開或移除 H 殼 (大盾牌) — 這是接觸側蓋螺絲的關鍵步驟。</li>
+                            <li>在 H 殼鬆開後，才能安全拆卸側蓋 (飛鏢)。</li>
+                        </ol>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-blue-800 mb-4">車殼扣件類型分佈</h3>
+                    <div class="chart-container">
+                        <canvas id="fastenerTypeChart"></canvas>
+                    </div>
+                    <p class="text-center text-slate-600 mt-2">此圖表快速展示了構成車殼的主要扣件類型與數量，讓您對所需硬體有宏觀的了解。</p>
+                </div>
+            </section>
+
+            <section id="content-front" class="content-section"></section>
+            <section id="content-mid" class="content-section"></section>
+            <section id="content-rear" class="content-section"></section>
+
+            <section id="content-master-list" class="content-section">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-blue-800 mb-4">車身外殼扣件總目錄</h2>
+                    <p class="mb-4 text-slate-700">在此處搜尋您需要的任何扣件。您可以輸入零件料號、規格（例如 "M6"）或應用位置（例如 "龍頭"）來快速篩選結果。</p>
+                    <input type="text" id="searchInput" placeholder="搜尋料號、規格或位置..." class="w-full p-3 border border-slate-300 rounded-lg mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-slate-100">
+                                <tr>
+                                    <th class="p-3 font-semibold text-sm">OEM 料號</th>
+                                    <th class="p-3 font-semibold text-sm">描述</th>
+                                    <th class="p-3 font-semibold text-sm">規格</th>
+                                    <th class="p-3 font-semibold text-sm">數量</th>
+                                    <th class="p-3 font-semibold text-sm">主要應用位置</th>
+                                </tr>
+                            </thead>
+                            <tbody id="masterTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="content-purchase" class="content-section">
+                 <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-blue-800 mb-4">扣件升級與組裝最佳實踐</h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-xl font-bold text-blue-800 mb-2">扣件升級考量</h3>
+                            <div class="bg-slate-100 p-4 rounded-lg">
+                                <h4 class="font-bold text-slate-800">原廠 (OEM) 扣件</h4>
+                                <p class="text-slate-700 mt-1">為鍍鋅鋼材，符合基本耐用性，但長時間使用後可能出現鏽蝕。</p>
+                            </div>
+                            <div class="bg-sky-100 border-l-4 border-sky-500 p-4 rounded-r-lg mt-4">
+                                <h4 class="font-bold text-sky-800">不鏽鋼 (SUS304) 升級</h4>
+                                <p class="text-sky-700 mt-1">是解決生鏽問題、提升質感的最佳選擇。市面上有完整的售後套件，是值得的長期投資。</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-blue-800 mb-2">最終組裝檢查清單</h3>
+                            <ul class="list-decimal list-inside space-y-2 text-slate-700 bg-slate-100 p-4 rounded-lg">
+                                <li>使用標籤袋分類螺絲，避免混淆。</li>
+                                <li>所有螺絲初始用手旋入，確保螺牙對準。</li>
+                                <li>遵循對角或十字交叉順序逐步鎖緊。</li>
+                                <li>鎖緊前，確認所有塑膠件的卡榫、插銷準確對位。</li>
+                                <li>檢查所有塑膠鉚釘 (`90269-06816`) 是否老化，必要時更換備品。</li>
+                                <li>完成後短途試駕，返回後再次巡視並緊固所有扣件。</li>
+                            </ul>
+                        </div>
+                    </div>
+                 </div>
+            </section>
+        </main>
+    </div>
+
+<script>
+const masterFastenerData = [
+    { oem: "90183-05816", desc: "彈簧螺帽", spec: "5mm", qty: 4, loc: "龍頭車殼" },
+    { oem: "90159-05028", desc: "附墊圈螺絲", spec: "M5", qty: 2, loc: "龍頭車殼" },
+    { oem: "97702-50016", desc: "自攻螺絲", spec: "5x16mm", qty: 4, loc: "龍頭車殼" },
+    { oem: "90160-05803", desc: "自攻螺絲", spec: "M5", qty: 2, loc: "龍頭車殼" },
+    { oem: "90183-05816", desc: "彈簧螺帽", spec: "5mm", qty: 6, loc: "H殼/腿部護板" },
+    { oem: "97702-50016", desc: "自攻螺絲", spec: "5x16mm", qty: 6, loc: "H殼/腿部護板" },
+    { oem: "90269-06816", desc: "塑膠鉚釘", spec: "6mm", qty: 2, loc: "H殼/腿部護板" },
+    { oem: "90109-06892", desc: "螺栓", spec: "M6", qty: 2, loc: "H殼/腿部護板" },
+    { oem: "90109-06172", desc: "螺栓", spec: "M6", qty: 1, loc: "H殼/腿部護板" },
+    { oem: "90154-06807", desc: "圓頭螺絲", spec: "M6", qty: 4, loc: "前擋泥板" },
+    { oem: "90119-06821", desc: "附墊圈螺栓", spec: "M6", qty: 1, loc: "前擋泥板" },
+    { oem: "97707-50016", desc: "平頭自攻螺絲", spec: "5x16mm", qty: 6, loc: "前擋泥板" },
+    { oem: "90183-05816", desc: "彈簧螺帽", spec: "5mm", qty: 2, loc: "前擋泥板" },
+    { oem: "90183-06801", desc: "彈簧螺帽", spec: "6mm", qty: 2, loc: "前擋泥板" },
+    { oem: "97702-50016", desc: "自攻螺絲", spec: "5x16mm", qty: 2, loc: "側蓋" },
+    { oem: "90183-05816", desc: "彈簧螺帽", spec: "5mm", qty: 2, loc: "側蓋" },
+    { oem: "90109-06172", desc: "螺栓", spec: "M6", qty: 4, loc: "側蓋" },
+    { oem: "90109-06172", desc: "螺栓", spec: "M6", qty: 4, loc: "腳踏板" },
+    { oem: "90109-06892", desc: "螺栓", spec: "M6", qty: 2, loc: "腳踏板" },
+    { oem: "90183-05816", desc: "彈簧螺帽", spec: "5mm", qty: 3, loc: "腳踏板" },
+    { oem: "92012-08020", desc: "螺絲", spec: "M8", qty: 4, loc: "腳踏板" },
+    { oem: "95702-06500", desc: "凸緣螺帽", spec: "M6", qty: 2, loc: "座墊/置物箱" },
+    { oem: "90179-05849", desc: "螺帽", spec: "M5", qty: 2, loc: "座墊/置物箱" },
+    { oem: "90109-06885", desc: "螺栓", spec: "M6", qty: 4, loc: "座墊/置物箱" },
+    { oem: "95022-08030", desc: "凸緣螺栓", spec: "M8", qty: 4, loc: "座墊/置物箱" },
+    { oem: "90105-068C1", desc: "墊圈座螺栓", spec: "M6", qty: 2, loc: "座墊/置物箱" },
+    { oem: "95827-08045", desc: "凸緣螺栓", spec: "M8x45mm", qty: 2, loc: "後扶手" },
+    { oem: "97702-50016", desc: "自攻螺絲", spec: "5x16mm", qty: 6, loc: "尾燈/後土除" },
+    { oem: "90109-06043", desc: "螺栓", spec: "M6", qty: 2, loc: "尾燈/後土除" },
+    { oem: "95702-06500", desc: "凸緣螺帽", spec: "M6", qty: 2, loc: "尾燈/後土除" },
+    { oem: "90183-05816", desc: "彈簧螺帽", spec: "5mm", qty: 2, loc: "尾燈/後土除" },
+    { oem: "90109-06172", desc: "螺栓", spec: "M6", qty: 2, loc: "尾燈/後土除" },
+    { oem: "98507-06030", desc: "螺栓", spec: "M6x30mm", qty: 9, loc: "傳動外蓋" },
+    { oem: "98507-06090", desc: "螺栓", spec: "M6x90mm", qty: 2, loc: "傳動外蓋" },
+    { oem: "97707-50616", desc: "自攻螺絲", spec: "5x16mm", qty: 2, loc: "傳動外蓋" },
+    { oem: "98502-05020", desc: "盤頭螺絲", spec: "M5x20mm", qty: 7, loc: "空濾總成" },
+    { oem: "91312-06020", desc: "圓頭螺栓", spec: "M6x20mm", qty: 2, loc: "排氣管護片" },
+    { oem: "90201-06052", desc: "墊片", spec: "6mm", qty: 2, loc: "排氣管護片" },
+];
+
+const sectionsData = {
+    front: {
+        title: "前段車身總成",
+        intro: "此區域涵蓋龍頭、H 殼（大盾牌）及前擋泥板。四代勁戰採用大量隱藏式扣件，拆卸必須遵循特定順序，避免損壞卡榫。",
+        subSections: [
+            { 
+                id: 'handlebar-cowling', 
+                name: '龍頭車殼',
+                analysis: '覆蓋儀表板與龍頭，由前後兩片組成。拆卸時注意彈簧螺帽 (`90183-05816`) 極易脫落或遺失，缺少會導致車殼鬆動與異音。',
+                fasteners: masterFastenerData.filter(d => d.loc === '龍頭車殼')
+            },
+            {
+                id: 'h-shell',
+                name: 'H殼與腿部護板',
+                analysis: 'H 殼固定方式包含緊密的倒扣卡榫，建議使用塑膠撬棒從縫隙安全釋放卡榫。此為接觸側蓋螺絲的必要前置步驟。',
+                fasteners: masterFastenerData.filter(d => d.loc === 'H殼/腿部護板')
+            },
+            {
+                id: 'front-fender',
+                name: '前擋泥板',
+                analysis: '直接固定於前叉總成，包含外層烤漆件與內層塑膠件。結構單純，但螺絲易因泥沙卡死。',
+                fasteners: masterFastenerData.filter(d => d.loc === '前擋泥板')
+            }
+        ]
+    },
+    mid: {
+        title: "主車體與腳踏板總成",
+        intro: "此區包含車身大面積的側蓋（飛鏢）以及騎士的腳踏區域，定義了車輛的輪廓。原廠螺絲易鏽蝕，許多車主會在此處升級不鏽鋼套件。",
+        subSections: [
+            {
+                id: 'side-covers',
+                name: '側蓋 (飛鏢)',
+                analysis: '關鍵：前端固定點位於 H 殼內部，後端固定點需先移除置物箱才能接觸。必須在 H 殼鬆開後才能安全拆卸。',
+                fasteners: masterFastenerData.filter(d => d.loc === '側蓋')
+            },
+            {
+                id: 'floorboard',
+                name: '腳踏板與下護板',
+                analysis: '包含騎士主要的置腳平台、電瓶蓋。可獨立拆卸，但通常與側蓋拆卸作業一併進行。',
+                fasteners: masterFastenerData.filter(d => d.loc === '腳踏板')
+            }
+        ]
+    },
+    rear: {
+        title: "後段與引擎周邊總成",
+        intro: "涵蓋乘客區、置物箱、尾燈、後扶手，以及與引擎相關的傳動蓋、空濾與排氣管護片等。拆卸置物箱是多數後段維修的第一步。",
+        subSections: [
+            {
+                id: 'seat-storage',
+                name: '座墊與置物箱',
+                analysis: '移除座墊與置物箱（馬桶）是進行車輛後半部所有維修工作的第一步，能完全暴露側蓋後方、後扶手及尾燈總成的固定螺絲。',
+                fasteners: masterFastenerData.filter(d => d.loc === '座墊/置物箱')
+            },
+            {
+                id: 'rear-grab',
+                name: '後扶手與尾燈',
+                analysis: '後扶手直接鎖在車架上。尾燈與後土除總成則固定於副車架末端。',
+                fasteners: masterFastenerData.filter(d => d.loc === '後扶手' || d.loc === '尾燈/後土除')
+            },
+            {
+                id: 'engine-covers',
+                name: '引擎周邊護蓋',
+                analysis: '包含傳動外蓋、空濾外蓋與排氣管護片。這些都屬於獨立系統，可單獨拆卸進行保養。',
+                fasteners: masterFastenerData.filter(d => ['傳動外蓋', '空濾總成', '排氣管護片'].includes(d.loc))
+            }
+        ]
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    const mainNav = document.getElementById('main-nav');
+    const mainContent = document.getElementById('main-content');
+    const searchInput = document.getElementById('searchInput');
+    const masterTableBody = document.getElementById('masterTableBody');
+
+    function createMasterTableRows(data) {
+        if (!data || data.length === 0) return '<tr><td colspan="5" class="text-center p-4 text-slate-500">無符合結果</td></tr>';
+        return data.map((item, index) => `
+            <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-slate-50'} border-b">
+                <td class="p-3 text-sm text-slate-700">${item.oem}</td>
+                <td class="p-3 text-sm text-slate-700">${item.desc}</td>
+                <td class="p-3 text-sm font-mono text-blue-600">${item.spec}</td>
+                <td class="p-3 text-sm text-center font-semibold">${item.qty}</td>
+                <td class="p-3 text-sm text-slate-700">${item.loc}</td>
+            </tr>
+        `).join('');
+    }
+    
+    function createSubSectionTableRows(data) {
+        return data.map((item, index) => `
+            <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-slate-50'} border-b">
+                <td class="p-3 text-sm text-slate-700">${item.oem}</td>
+                <td class="p-3 text-sm text-slate-700">${item.desc}</td>
+                <td class="p-3 text-sm font-mono text-blue-600">${item.spec}</td>
+                <td class="p-3 text-sm text-center font-semibold">${item.qty}</td>
+            </tr>
+        `).join('');
+    }
+
+    function renderMasterTable(data) {
+        masterTableBody.innerHTML = createMasterTableRows(data);
+    }
+    
+    function createSectionHTML(sectionKey) {
+        const section = sectionsData[sectionKey];
+        if (!section) return '';
+
+        let subNavHTML = section.subSections.map((sub, index) => `
+            <button data-sub-section-id="${sub.id}" class="sub-nav-tab ${index === 0 ? 'sub-tab-active' : 'sub-tab-inactive'} px-4 py-2 rounded-md text-sm font-medium">${sub.name}</button>
+        `).join('');
+
+        let subContentHTML = section.subSections.map((sub, index) => `
+            <div id="content-${sub.id}" class="sub-content-section ${index === 0 ? 'active' : ''}">
+                <div class="bg-sky-50 border-l-4 border-sky-400 text-sky-800 p-4 rounded-r-lg my-4">
+                    <h4 class="font-bold">🔧 拆裝分析與技巧</h4>
+                    <p class="mt-1 text-sm">${sub.analysis}</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-100">
+                            <tr>
+                                <th class="p-3 font-semibold text-sm">OEM 料號</th>
+                                <th class="p-3 font-semibold text-sm">描述</th>
+                                <th class="p-3 font-semibold text-sm">規格</th>
+                                <th class="p-3 font-semibold text-sm">數量</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${createSubSectionTableRows(sub.fasteners)}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `).join('');
+
+        return `
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-2xl font-bold text-blue-800 mb-2">${section.title}</h2>
+                <p class="mb-4 text-slate-700">${section.intro}</p>
+                <div class="flex flex-wrap gap-2 border-b pb-4">
+                    ${subNavHTML}
+                </div>
+                <div>
+                    ${subContentHTML}
+                </div>
+            </div>
+        `;
+    }
+
+    document.getElementById('content-front').innerHTML = createSectionHTML('front');
+    document.getElementById('content-mid').innerHTML = createSectionHTML('mid');
+    document.getElementById('content-rear').innerHTML = createSectionHTML('rear');
+
+    mainNav.addEventListener('click', (e) => {
+        if (e.target.matches('.nav-tab')) {
+            const targetId = e.target.dataset.target;
+            
+            mainNav.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('tab-active', 'text-white');
+                tab.classList.add('tab-inactive', 'text-slate-800');
+            });
+
+            e.target.classList.add('tab-active', 'text-white');
+            e.target.classList.remove('tab-inactive', 'text-slate-800');
+
+            mainContent.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.getElementById(`content-${targetId}`).classList.add('active');
+            
+            if(targetId === 'master-list'){
+                renderMasterTable(masterFastenerData);
+            }
+        }
+    });
+
+    mainContent.addEventListener('click', (e) => {
+        if (e.target.matches('.sub-nav-tab')) {
+            const subSectionId = e.target.dataset.subSectionId;
+            const parentContainer = e.target.closest('.bg-white');
+            if (!parentContainer) return;
+
+            parentContainer.querySelectorAll('.sub-nav-tab').forEach(tab => {
+                tab.classList.remove('sub-tab-active');
+                tab.classList.add('sub-tab-inactive');
+            });
+            
+            e.target.classList.add('sub-tab-active');
+            e.target.classList.remove('sub-tab-inactive');
+
+            parentContainer.querySelectorAll('.sub-content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            parentContainer.querySelector(`#content-${subSectionId}`).classList.add('active');
+        }
+    });
+
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredData = masterFastenerData.filter(item => 
+            item.oem.toLowerCase().includes(searchTerm) ||
+            item.desc.toLowerCase().includes(searchTerm) ||
+            item.spec.toLowerCase().includes(searchTerm) ||
+            item.loc.toLowerCase().includes(searchTerm)
+        );
+        renderMasterTable(filteredData);
+    });
+    
+    function createFastenerTypeChart() {
+        const ctx = document.getElementById('fastenerTypeChart').getContext('2d');
+        
+        const typeCounts = masterFastenerData.reduce((acc, item) => {
+            let type = item.desc;
+            if (type.includes('自攻')) type = '自攻螺絲';
+            else if (type.includes('螺栓')) type = '螺栓';
+            else if (type.includes('螺絲')) type = '機械螺絲';
+            else if (type.includes('螺帽')) type = '螺帽';
+            else if (type.includes('鉚釘') || type.includes('墊片')) type = '扣具/墊片';
+            else type = '其他';
+            
+            acc[type] = (acc[type] || 0) + item.qty;
+            return acc;
+        }, {});
+        
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(typeCounts),
+                datasets: [{
+                    label: '扣件數量',
+                    data: Object.values(typeCounts),
+                    backgroundColor: [
+                        'rgba(30, 64, 175, 0.7)',
+                        'rgba(29, 78, 216, 0.7)',
+                        'rgba(37, 99, 235, 0.7)',
+                        'rgba(59, 130, 246, 0.7)',
+                        'rgba(96, 165, 250, 0.7)',
+                        'rgba(147, 197, 253, 0.7)'
+                    ],
+                    borderColor: 'rgba(30, 58, 138, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                         callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.parsed.y} 個`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '總數量'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                           maxRotation: 0,
+                           minRotation: 0
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    createFastenerTypeChart();
+});
+</script>
+</body>
+</html>
