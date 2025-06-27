@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SYM T2 251cc 互動式車殼扣件指南 (已修正)</title>
+    <title>SYM T2 251cc 互動式車殼扣件指南 (最終修正版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -42,6 +42,13 @@
             display: none;
         }
         .content-section.active {
+            display: block;
+        }
+        /* --- BUG FIX: Added rules for sub-content sections --- */
+        .sub-content-section {
+            display: none;
+        }
+        .sub-content-section.active {
             display: block;
         }
         .chart-container {
@@ -330,8 +337,8 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
 
         let subContentHTML = section.subSections.map((sub, index) => `
-            <div id="content-${sub.id}" class="sub-content-section mt-4 ${index === 0 ? 'active' : ''}">
-                <div class="bg-sky-50 border-l-4 border-sky-400 text-sky-800 p-4 rounded-r-lg mb-4">
+            <div id="content-${sub.id}" class="sub-content-section ${index === 0 ? 'active' : ''}">
+                <div class="bg-sky-50 border-l-4 border-sky-400 text-sky-800 p-4 rounded-r-lg my-4">
                     <h4 class="font-bold">🔧 拆裝分析與技巧</h4>
                     <p class="mt-1 text-sm">${sub.analysis}</p>
                 </div>
@@ -357,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="bg-white p-6 rounded-xl shadow-lg">
                 <h2 class="text-2xl font-bold text-blue-800 mb-2">${section.title}</h2>
                 <p class="mb-4 text-slate-700">${section.intro}</p>
-                <div class="flex flex-wrap gap-2 border-b pb-4 mb-4">
+                <div class="flex flex-wrap gap-2 border-b pb-4">
                     ${subNavHTML}
                 </div>
                 <div>
@@ -397,9 +404,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     mainContent.addEventListener('click', (e) => {
         if (e.target.matches('.sub-nav-tab')) {
-            const sectionKey = e.target.dataset.section;
             const subSectionId = e.target.dataset.subSectionId;
-            const parentContainer = document.getElementById(`content-${sectionKey}`);
+            const parentContainer = e.target.closest('.bg-white'); // Find the direct parent container of this group
+
+            if (!parentContainer) return;
 
             parentContainer.querySelectorAll('.sub-nav-tab').forEach(tab => {
                 tab.classList.remove('sub-tab-active');
@@ -515,4 +523,3 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
-
